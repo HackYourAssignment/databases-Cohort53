@@ -13,8 +13,8 @@ The lesson plan is primarily written for mentors so that they can use examples a
 7. How to use SQL to Create, Read, Update and Delete (CRUD) ?
 8. What is a database dump?
 
-> Before you start, ask around and make sure that everyone has successfully installed
-> the [MySQL Community Edition Server](https://dev.mysql.com/downloads/mysql/)
+> Before you start, make sure that everyone has successfully set up PostgreSQL using 
+> Docker as described in the [Setup guide](./Postgresql-setup.md)
 
 ## 1. What is an information (system) ?
 
@@ -72,8 +72,8 @@ creating users, giving users appropriate permissions, supporting query language 
 
 ### Example
 
-Examples of DBMS implementations: MySQL, MongoDB, PostgreSQL, DynamoDB etc.
-We use MySQL for the demonstration.
+Examples of DBMS implementations: PostgreSQL, MySQL, MongoDB, DynamoDB etc.
+We use PostgreSQL for the demonstration.
 
 The following command shows all existing database:
 
@@ -127,7 +127,7 @@ can be stored in a database and the external application can query the relevant
 details per request.
 
 ```
-Use connection-test.js file to demonstrate the database connection.
+Use scripts/connection-test.js file to demonstrate the database connection.
 ```
 
 ### Exercise
@@ -194,21 +194,21 @@ _What data types should be used to store a boolean value?_
 
 ### Essence
 
-MySQL data types are used to define what types of values the columns of the tables in the database contain.
+PostgreSQL data types are used to define what types of values the columns of the tables in the database contain.
 
 ## 7. How to use SQL to Create, Read, Update and Delete (CRUD)
 
 ### Explanation
 
-We will use both MySQL command line client and the JavaScript client to demonstrate the
+We will use both PostgreSQL command line client (psql) and the JavaScript client to demonstrate the
 interaction with the SQL server.
 
-`Use create-table.js, insert-values.js` files to show how the table creation, insertion etc.
+`Use scripts/create-table.js, scripts/insert-values.js` files to show how the table creation, insertion etc.
 can be done via JavaScript client
 
 ### Example
 
-All examples can be executed in the `MySQL command line client`.
+All examples can be executed in the `PostgreSQL command line client (psql)`.
 Remember that all these commands can also be sent via JavaScript clients.
 Please check the available `.js` files in the `Week1` folder.
 
