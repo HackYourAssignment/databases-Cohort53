@@ -402,7 +402,7 @@ psql -U hyfuser -h localhost -d company < /path/to/the/dump/file
 To apply the dump from the terminal(with generally a dollar prompt `$`), use the following command
 
 ```
-mysql -uhyfuser -p [database] < /path/to/the/dump/file
+psql -uhyfuser -p [database] < /path/to/the/dump/file
 ```
 
 Use [this](https://john-dugan.com/dump-and-restore-mysql-databases-in-windows/) link to learn more about
