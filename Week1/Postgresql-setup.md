@@ -55,7 +55,7 @@ If you followed the steps correctly, your local PostgreSQL server should be runn
 Connect to your database using the powerful `psql` command-line tool:
 
 ```bash
-docker exec -it my-postgres psql -U hyfuser -d postgres
+docker exec -it my-postgres psql -U hyfuser -d hyfuser
 ```
 
 You should see the psql prompt:
