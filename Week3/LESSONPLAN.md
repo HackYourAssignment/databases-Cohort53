@@ -354,7 +354,7 @@ rollback OR commit;
 
 #### ACID properties
 
-Transactions in relational databases (like MySQL) follow the
+Transactions in relational databases (like PostgreSQL) follow the
 following properties.
 
 1. Atomicity : Execute all commands in the transaction or execute zero commands in the transaction (all or none).
@@ -411,7 +411,7 @@ select * from employees; # Show the new salary
 
 #### Isolation and Consistency examples
 
-Start two `mysql` command line clients.
+Start two `psql` command line clients.
 
 ```sql
 --- First client
@@ -526,8 +526,8 @@ SQL injections are dangerous. Always sanitize the input from your HTML forms.
 
 ### Example
 
-> use the same tables here (as Week 1 lessonplan) to be consistent and show students how to make similar databases using
-> MySQL and MongoDB
+> use the same tables here (as Week 1 [lesson plan](../Week1/LESSONPLAN.md)) to be consistent and show trainees how to make similar databases using
+> PostgreSQL and MongoDB
 
 ### Exercise
 
