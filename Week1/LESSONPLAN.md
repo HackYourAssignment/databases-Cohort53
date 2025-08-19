@@ -13,8 +13,8 @@ The lesson plan is primarily written for mentors so that they can use examples a
 7. How to use SQL to Create, Read, Update and Delete (CRUD) ?
 8. What is a database dump?
 
-> Before you start, ask around and make sure that everyone has successfully installed
-> the [MySQL Community Edition Server](https://dev.mysql.com/downloads/mysql/)
+> Before you start, make sure that everyone has successfully set up PostgreSQL using 
+> Docker as described in the [Setup guide](./Postgresql-setup.md)
 
 ## 1. What is an information (system) ?
 
@@ -72,31 +72,31 @@ creating users, giving users appropriate permissions, supporting query language 
 
 ### Example
 
-Examples of DBMS implementations: MySQL, MongoDB, PostgreSQL, DynamoDB etc.
-We use MySQL for the demonstration.
+Examples of DBMS implementations: PostgreSQL, MySQL, MongoDB, DynamoDB etc.
+We use PostgreSQL for the demonstration.
 
-The following command shows all existing database:
+The following command shows all existing databases:
 
-```
-show databases;
+```sql
+\l
 ```
 
 The following command creates a database:
 
-```
+```sql
 CREATE DATABASE company;
 ```
 
-The following command selects (switches to) a database:
+The following command connects to (switches to) a database:
 
-```
-USE company;
+```sql
+\c company
 ```
 
 The following command shows you the current database:
 
-```
-select database();
+```sql
+SELECT current_database();
 ```
 
 ### Exercise
@@ -127,7 +127,7 @@ can be stored in a database and the external application can query the relevant
 details per request.
 
 ```
-Use connection-test.js file to demonstrate the database connection.
+Use scripts/connection-test.js file to demonstrate the database connection.
 ```
 
 ### Exercise
@@ -175,18 +175,17 @@ Boolean values need much less space than a BLOB (Binary Large OBject) of image.
 When the tables are created in the database, all of its columns must
 have fixed data type. A column of age must have a number as a data type.
 
-### Example (for MySQL 5.0.3 and higher)
+### Example (for PostgreSQL)
 
-| Type       | Description                                   | Example Value           |
-| ---------- | --------------------------------------------- | ----------------------- |
-| int        | Numbers                                       | 42                      |
-| float      | Decimal numbers                               | 3.14                    |
-| varchar(N) | String with variable maximum of N characters  | "Dragon"                |
-| text       | String with fixed maximum of 65535 characters | "Positive"              |
-| datetime   | Store date and time without timezone          | 2019-01-01 22:10:23     |
-| timestamp  | Store date with timezone (e.g. last login)    | 2019-01-01 22:10:23 UTC |
-| ENUM       | Define a set of allowed values                | (MALE, FEMALE)          |
-| BLOB       | Store binary files                            | an image                |
+| Type                    | Description                                   | Example Value           |
+| ----------------------- | --------------------------------------------- | ----------------------- |
+| INTEGER or INT          | Numbers                                       | 42                      |
+| REAL or FLOAT           | Decimal numbers                               | 3.14                    |
+| VARCHAR(N)              | String with variable maximum of N characters  | "Dragon"                |
+| TEXT                    | String with unlimited length                  | "Positive"              |
+| TIMESTAMP               | Store date and time with timezone             | 2019-01-01 22:10:23+00 |
+| BOOLEAN                 | True/False values                             | TRUE, FALSE             |
+| BYTEA                   | Store binary files                            | an image                |
 
 ### Exercise
 
@@ -194,21 +193,21 @@ _What data types should be used to store a boolean value?_
 
 ### Essence
 
-MySQL data types are used to define what types of values the columns of the tables in the database contain.
+PostgreSQL data types are used to define what types of values the columns of the tables in the database contain.
 
 ## 7. How to use SQL to Create, Read, Update and Delete (CRUD)
 
 ### Explanation
 
-We will use both MySQL command line client and the JavaScript client to demonstrate the
+We will use both PostgreSQL command line client (psql) and the JavaScript client to demonstrate the
 interaction with the SQL server.
 
-`Use create-table.js, insert-values.js` files to show how the table creation, insertion etc.
+`Use scripts/create-table.js, scripts/insert-values.js` files to show how the table creation, insertion etc.
 can be done via JavaScript client
 
 ### Example
 
-All examples can be executed in the `MySQL command line client`.
+All examples can be executed in the `PostgreSQL command line client (psql)`.
 Remember that all these commands can also be sent via JavaScript clients.
 Please check the available `.js` files in the `Week1` folder.
 
@@ -223,13 +222,13 @@ with five columns:
 4. `joining_date` that contains a date time.
 5. `gender` than can either be `'m'` or `'f'`.
 
-```
+```sql
 CREATE TABLE employees (
-    employee_id int,
-    employee_name varchar(50),
-    salary float,
-    joining_date datetime,
-    gender enum('m', 'f')
+    employee_id INTEGER,
+    employee_name VARCHAR(50),
+    salary REAL,
+    joining_date TIMESTAMP,
+    gender VARCHAR(1) CHECK (gender IN ('m', 'f'))
 );
 ```
 
@@ -239,28 +238,22 @@ The following command inserts a row in the table `employees`.
 Note that the sequence of columns must be followed.
 
 ```sql
-INSERT INTO employees VALUES (101, "Dan", 5000, "2019-06-24", 'm');
+INSERT INTO employees VALUES (101, 'Dan', 5000, '2019-06-24', 'm');
 ```
 
 The following command uses column name (also known as field name sometimes) syntax:
 
 ```sql
-INSERT INTO employees (employee_name , salary, employee_id, gender, joining_date) VALUES("Dany", 5000, 102, 'f', "2019-05-20");
+INSERT INTO employees (employee_name, salary, employee_id, gender, joining_date) VALUES('Dany', 5000, 102, 'f', '2019-05-20');
 ```
 
 The following command uses the same syntax to add multiple rows at a time
 
 ```sql
-INSERT INTO employees (employee_name , salary, employee_id, gender, joining_date) VALUES("Ben", 7000, 103, 'm', "2019-07-20"), ("Benta", 3000, 104, 'f', "2019-10-12"), ("Raj", 9000, 105, 'm', "2019-01-01");
+INSERT INTO employees (employee_name, salary, employee_id, gender, joining_date) VALUES('Ben', 7000, 103, 'm', '2019-07-20'), ('Benta', 3000, 104, 'f', '2019-10-12'), ('Raj', 9000, 105, 'm', '2019-01-01');
 ```
 
-The following command uses the SET syntax to insert values in a random order of columns:
-
-```sql
-INSERT INTO employees SET employee_name = "Joe", salary = 4000, joining_date = "2019-07-01", gender = 'f', employee_id = 100;
-```
-
-> If you don't remember the column names, then use describe employees; command which lists the column names and their
+> If you don't remember the column names, then use `\d employees;` command which lists the column names and their
 > data types.
 
 #### SELECT
@@ -278,7 +271,7 @@ The condition is applied on the column `salary` of each row.
 where `salary` column has the value `>3000`.
 
 ```sql
-SELECT employee_name from employees
+SELECT employee_name FROM employees
 WHERE salary > 3000;
 ```
 
@@ -299,8 +292,8 @@ WHERE employee_id = 102;
 The following command deletes all (rows of) employees who joined after the 1st of July 2019.
 
 ```sql
-DELETE from employees
-WHERE joining_date > "2019-07-01";
+DELETE FROM employees
+WHERE joining_date > '2019-07-01';
 ```
 
 ### Exercise
@@ -326,7 +319,7 @@ when tables have long names and joins are used.
 
 #### Example (without nested query)
 
-`SELECT employee_id as "Employee Number", employee_name as "Employee Name", salary as Earnings from employees;`
+`SELECT employee_id AS "Employee Number", employee_name AS "Employee Name", salary AS Earnings FROM employees;`
 
 ### NOT NULL and DEFAULT values for columns
 
@@ -335,67 +328,45 @@ when tables have long names and joins are used.
 While creating a table, some columns may be declared as `NOT NULL` or `DEFAULT` with a value,
 or both. For example, `gender` of the employee can NOT be null. Also some columns like
 `Number of holidays` can have default values. It is a good practice to explicitly mark
-the columns as `NOT NULL` so that MySQL can do optimizations in storing/indexing.
+the columns as `NOT NULL` so that PostgreSQL can do optimizations in storing/indexing.
 
 #### Example
 
 Demonstrate the difference with the live execution of the following sequence of commands:
 
 ```sql
-CREATE TABLE default_not_null_demo(num1 int, num2 int NOT NULL, num3 int default 5555, num4 int not null default 1111);
-DESCRIBE default_not_null_demo;
-INSERT INTO default_not_null_demo set num2 = 1, num4 = default;
-SELECT * from default_not_null_demo;
-INSERT INTO default_not_null_demo set num2 = 1, num3 = 233, num4 = default;
+CREATE TABLE default_not_null_demo(num1 INTEGER, num2 INTEGER NOT NULL, num3 INTEGER DEFAULT 5555, num4 INTEGER NOT NULL DEFAULT 1111);
+\d default_not_null_demo;
+INSERT INTO default_not_null_demo (num2, num4) VALUES (1, DEFAULT);
+SELECT * FROM default_not_null_demo;
+INSERT INTO default_not_null_demo (num2, num3, num4) VALUES (1, 233, DEFAULT);
 ```
 
-### What is int(N) ?
+
+### TIMESTAMP vs TIMESTAMP WITHOUT TIME ZONE
 
 #### Explanation
 
-The number N represents the number of decimal spaces that may be padded when displaying the number.
-It does not indicate the highest number that can be stored in the column. E.g. The column `cost int(3)`
-can hold numbers greater than 999.
-
-#### Example
-
-Illustrate the difference with the live execution of the following sequence of commands:
-
-```sql
-CREATE TABLE test_int(num1 int(4) ZEROFILL, num2 int(6));
-INSERT INTO test_int values (23,34);
-INSERT INTO test_int values (3,534);
-INSERT INTO test_int values (14563,534);
-INSERT INTO test_int values (12345,98534);
-INSERT INTO test_int values (12345,1234567);
-SELECT * FROM test_int;
-```
-
-### Datetime vs Timestamp
-
-#### Explanation
-
-Both Datetime and Timestamp accept values in the format `YYYY-MM-DD HH:MM:SS`.
-However, MySQL stored the timestamp value along with the current system time zone information.
-If the time zone is changed, the value stored in the database is changed accordingly.
-Datetime may be a suitable data type for the `joining date`, while timestamp
-may be a suitable data type for `last login` where the exact time and time zone might be crucial.
+Both TIMESTAMP and TIMESTAMP WITHOUT TIME ZONE accept values in the format `YYYY-MM-DD HH:MM:SS`.
+However, PostgreSQL stores the TIMESTAMP value along with the current system time zone information.
+If the time zone is changed, the value displayed might be adjusted accordingly.
+TIMESTAMP WITHOUT TIME ZONE may be suitable for the `joining date`, while TIMESTAMP WITH TIME ZONE
+may be suitable for `last login` where the exact time and time zone might be crucial.
 
 #### Example
 
 Demonstrate with the live execution of the following sequence of commands:
 
 ```sql
-CREATE TABLE test_timestamp (dt datetime, ts timestamp);
+CREATE TABLE test_timestamp (dt TIMESTAMP WITHOUT TIME ZONE, ts TIMESTAMP WITH TIME ZONE);
 
-INSERT INTO test_timestamp VALUES ("2020-01-01 00:00:00", "2020-01-01 00:00:00");
-
-SELECT * FROM test_timestamp;
-
-SET time_zone = '+05:30';
+INSERT INTO test_timestamp VALUES ('2020-01-01 00:00:00', '2020-01-01 00:00:00');
 
 SELECT * FROM test_timestamp;
 
+SET timezone = 'Europe/Amsterdam';
+
+SELECT * FROM test_timestamp;
 ```
 
 ## 8. What is a database dump?
@@ -407,34 +378,31 @@ that reflect the current state of the database.
 
 ### Example
 
-To create the SQL dump, execute the following command from the terminal of MAC/Linux.
+To create the SQL dump, execute the following command from the terminal:
 
-```
-mysqldump -uhyfuser -p company > /path/to/store/dump/file/company-db-snapshot.sql
-```
-
-To create the SQL dump in Windows, you will have to
-[include the path of your MySQL installation in the `Path` environment variable](https://www.computerhope.com/issues/ch000549.htm)
-.
-Then you can execute the following command
-
-```
-mysqldump.exe -uhyfuser -p company > /path/to/store/dump/file/company-db-snapshot.sql
+```bash
+pg_dump -U hyfuser -h localhost company > /path/to/store/dump/file/company-db-snapshot.sql
 ```
 
 Note that the path should be a location where the user has `write` permission (E.g. Desktop),
 otherwise, you will get permission errors.
 
-To apply the dump from mysql command prompt (`mysql>`), use the following command
+To apply the dump from psql command prompt (`postgres=#`), use the following command
 
+```sql
+\i /path/to/the/dump/file
 ```
-source /path/to/the/dump/file
+
+To apply the dump from the terminal (with generally a dollar prompt `$`), use the following command
+
+```bash
+psql -U hyfuser -h localhost -d company < /path/to/the/dump/file
 ```
 
 To apply the dump from the terminal(with generally a dollar prompt `$`), use the following command
 
 ```
-mysql -uhyfuser -p [database] < /path/to/the/dump/file
+psql -uhyfuser -p [database] < /path/to/the/dump/file
 ```
 
 Use [this](https://john-dugan.com/dump-and-restore-mysql-databases-in-windows/) link to learn more about

@@ -1,21 +1,20 @@
 // Update with your config settings.
 
-module.exports = {
-
+export default {
   development: {
-    client: 'mysql',
+    client: 'pg',
     connection: {
-      host : '127.0.0.1',
-      user : 'root',
-      password : 'secret',
-      database : 'db_qa_session'
+      host: 'localhost',
+      port: 5432,
+      user: 'hyfuser',
+      password: 'hyfpassword',
+      database: 'userdb'
     },
     seeds: {
-      directory: __dirname + '/seeds'
+      directory: new URL('./seeds', import.meta.url).pathname
     },
     migrations: {
-      directory: __dirname + '/migrations'
+      directory: new URL('./migrations', import.meta.url).pathname
     }
   },
-
 };

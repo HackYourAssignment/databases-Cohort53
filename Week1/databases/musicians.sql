@@ -1,18 +1,21 @@
-DROP DATABASE IF EXISTS hyf_musicians;
-CREATE DATABASE hyf_musicians;
-USE hyf_musicians;
+-- Connect to the hyf_musicians database or create it
+-- DROP DATABASE IF EXISTS hyf_musicians; -- Uncomment if needed
+-- CREATE DATABASE hyf_musicians;
+-- \c hyf_musicians;
+
+BEGIN;
 
 CREATE TABLE Musicians(
-    Id INT NOT NULL,
+    Id INTEGER NOT NULL,
     FirstName TEXT NOT NULL,
     LastName TEXT NOT NULL,
-    Born INT NOT NULL,
+    Born INTEGER NOT NULL,
     PRIMARY KEY (Id)
 );
 
 CREATE TABLE InstrumentsPlayed(
-    Id INT NOT NULL,
-    Musician INT NOT NULL,
+    Id INTEGER NOT NULL,
+    Musician INTEGER NOT NULL,
     Instrument TEXT NOT NULL,
     PRIMARY KEY (Id),
     FOREIGN KEY (Musician) REFERENCES Musicians(Id)
@@ -26,3 +29,5 @@ INSERT INTO InstrumentsPlayed (Id, Musician, Instrument) VALUES (1, 1, 'Piano');
 INSERT INTO InstrumentsPlayed (Id, Musician, Instrument) VALUES (2, 2, 'Tenor saxophone');
 INSERT INTO InstrumentsPlayed (Id, Musician, Instrument) VALUES (3, 2, 'Soprano saxophone');
 INSERT INTO InstrumentsPlayed (Id, Musician, Instrument) VALUES (4, 3, 'Alto saxophone');
+
+COMMIT;

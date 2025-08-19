@@ -1,5 +1,4 @@
 const faker = require('faker');
-const fetch = require("node-fetch");
 
 const createFakeuser = () => ({
     name: faker.name.firstName() + ' ' + faker.name.lastName(),
@@ -10,7 +9,7 @@ const createFakeuser = () => ({
 exports.seed = async function (knex) {
     const fakeUsers = [];
 
-    const response = await fetch('https://api.github.com/repos/HackYourAssignment/databases/pulls', {
+    const response = await fetch('https://api.github.com/repos/HackYourFuture/databases/pulls', {
         headers: {'Content-Type': 'application/json'}
     });
     const pullRequests = await response.json();
