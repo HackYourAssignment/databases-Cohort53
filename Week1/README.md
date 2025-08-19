@@ -8,6 +8,7 @@
 
 These are the topics for week 1:
 
+0. [PostgreSQL setup guide](Postgresql-setup.md) to set up your PostgreSQL instance.
 1. [Introduction to databases](https://hackyourfuture.github.io/study/#/databases/README)
     - What is an information (system)?
     - What are entities?

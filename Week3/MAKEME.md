@@ -83,7 +83,7 @@ Submit all three files (`transactions-create-tables.js`, `transactions-insert-va
 
 ### 3.3. Exercise 3 : SQL injection
 
-You are given the below function which returns the population of a specific country from the [world](../Week2/world.sql)
+You are given the below function which returns the population of a specific country from the [world](../Week1/world.sql)
 database.
 
 ```js
