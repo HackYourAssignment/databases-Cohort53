@@ -1,4 +1,4 @@
-> This Assignment assumes you have set up PostgreSQL as described in the [Setup instruction](../Week1/Postgresql-setup.md).
+> This Assignment assumes you have set up PostgreSQL as described in the [Setup instructions](../Week1/Postgresql-setup.md).
 > If you haven't done this yet, please complete the setup first!
 
 # Assignment Databases Week 1

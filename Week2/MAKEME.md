@@ -1,5 +1,5 @@
-> This Assignment assumes you have installed the software [MySQL](https://dev.mysql.com/downloads/installer/) on your
-> computer. If not, please do that first!
+> This Assignment assumes you have set up PostgreSQL as described in the [Setup instructions](../Week1/Postgresql-setup.md).
+> If you haven't done this yet, please complete the setup first!
 
 # Assignment Databases Week 2
 
@@ -7,7 +7,7 @@
 
 1. Practice the concepts
 2. Prep exercises
-3. MySQL exercises
+3. PostgreSQL exercises
 4. Keep practicing (Optional)
 
 ## 1. Practice the concepts
@@ -31,7 +31,7 @@ The [QA_PREP_EXERCISE.md](./QA_PREP_EXERCISE.md) file explains what needs to be 
 There will also be some questions at the bottom to think about. Go through them _before_ the session on Sunday as it
 will be covered then.
 
-## 3. MySQL exercises
+## 3. PostgreSQL exercises
 
 > You will need to do some research to solve these exercises. All the concepts necessary to solve
 > these exercises are NOT covered in the reading material. This is on purpose.
@@ -82,7 +82,7 @@ It is always good to keep practicing, so if you have time then have a go at the 
 After you've finished your todo list it's time to show us what you got! The assignment that needs to be submitted is the
 following:
 
-1. MySQL exercises
+1. PostgreSQL exercises
 
 Upload both to your forked Databases repository in GitHub. Make a pull request to HackYourFuture's forked repository.
 

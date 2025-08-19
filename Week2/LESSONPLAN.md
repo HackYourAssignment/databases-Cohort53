@@ -6,7 +6,7 @@ and explain the concepts better in the class.
 
 ## Topics
 
-0. Async nature of MySQL-Nodejs interaction
+0. Async nature of PostgreSQL-Nodejs interaction
 1. Identifiers (Primary key, Foreign key, Composite key)
 2. Relationships (One-to-One, One-to-Many, Many-to-Many)
 3. Joins (inner, left and right) and aliases
@@ -14,43 +14,31 @@ and explain the concepts better in the class.
 5. Indexes
 6. Domain modeling (ERD)
 
-### 0. Async nature of MySQL-Nodejs interaction
+### 0. Async nature of PostgreSQL-Nodejs interaction
 
 #### Explanation
 
+The trainees should be well familiar with asynchronous JavaScript by now but it is good to make it clear:
 The nature of database queries is asynchronous.
 Some queries can take long time to execute.
-When our JavaScript MySQL client is sending the queries to the MySQL server,
+When our JavaScript PostgreSQL client is sending the queries to the PostgreSQL server,
 it may not want to block until the answer is returned.
-However if the JavaScript MySQL client is sending multiple queries such that
+However if the JavaScript PostgreSQL client is sending multiple queries such that
 the second query (for example insert) depends on the first query (for example create),
 then it must wait until the execution of the first query is successful.
-To ensure smooth interaction with the MySQL server, promises can be used in conjunction
+To ensure smooth interaction with the PostgreSQL server, promises can be used in conjunction
 with the await() method.
-
-#### Example(s)
-
-Demonstrate with four programs at [this repository](https://github.com/unmeshvrije/database_examples)
-how
-
-1. Program `1-db-naive.js` fails because the connection is closed prematurely.
-2. Program `2-db-callback.js` solves the problem but looks ugly because of the callback-hell.
-3. Program `3-db-promise.js` uses the promise chaining to make it better.
-   about building those promises
-4. Program `4-db-await.js` uses promisify() and await() to make it the best.
 
 #### Exercise
 
-The program called `async-create-insert.js` can be found in `Week2` folder.
-Add a select query to that program using await and promisify.
+The program called `async-create-insert.js` can be found in `Week2/scripts` folder.
+Add a select query to that program using async/await.
 
 #### Essence
 
 > async keyword : to create asynchronous function and ensure they return promise without having to worry
 
 > await : to call a function returning promise without having to call .then() over that promise
-
-> promisify() : to convert a callback based function to a promise based one.
 
 ### 1. Identifiers (Primary key, Foreign key, Composite key)
 
@@ -63,8 +51,8 @@ Add a select query to that program using await and promisify.
    They cannot be NULL values. Thus two rows can NEVER have same values in the column
    that is declared as PRIMARY KEY (In other words, this is a PRIMARY KEY CONSTRAINT on that column).
 
-> There are more constraints in MySQL. Read more about
-> them [here](https://www.w3resource.com//creating-table-advance/constraint.php).
+> There are more constraints in PostgreSQL. Read more about
+> them [here](https://www.postgresql.org/docs/current/ddl-constraints.html).
 
 #### Example
 
@@ -80,11 +68,11 @@ CREATE TABLE pri_uniq_demo
 
 -- Note the error that says that the primary key column cannot be NULL
 INSERT INTO pri_uniq_demo VALUES (NULL, NULL);
-ERROR 1048 (23000): Column 'id_pr' cannot be null
+> ERROR:  null value in column "id_pr" violates not-null constraint
 
 -- Note that the UNIQUE key column can be NULL
 INSERT INTO pri_uniq_demo VALUES (1, NULL);
-Query OK, 1 row affected (0.00 sec)
+INSERT 0 1
 
 -- Normal insertion
 INSERT INTO pri_uniq_demo VALUES (2, 2);
@@ -92,11 +80,11 @@ Query OK, 1 row affected (0.05 sec)
 
 -- Note that you cannot insert 2 in the id_un column because it should be UNIQUE
 INSERT INTO pri_uniq_demo VALUES (3, 2);
-ERROR 1062 (23000): Duplicate entry '2' for key 'id_un'
+ERROR:  duplicate key value violates unique constraint "pri_uniq_demo_id_un_key"
 
 -- Note that you cannot insert 2 in the id_pr column because it is PRIMARY KEY
 INSERT INTO pri_uniq_demo VALUES (2, 3);
-ERROR 1062 (23000): Duplicate entry '2' for key 'PRIMARY'
+> ERROR:  duplicate key value violates unique constraint "pri_uniq_demo_pkey"
 
 ```
 
@@ -137,7 +125,7 @@ The following two sentences convey the same information in different words.
 1. The Sales department (an instance of Department entity) of company X has three employees.
 2. John Smith, Raj Joshi and Su Li are employees of company X that belong to the Sales Department.
 
-To represent `1-1` or `1-M` relationship in MySQL tables, we need a column in one table
+To represent `1-1` or `1-M` relationship in PostgreSQL tables, we need a column in one table
 that `refers` a column in another table. Such a column should be a primary key column of another table
 and is called as a `foreign key`.
 In the Account table, `employee_id` is the column that acts as the foreign key which **refers to the
@@ -157,11 +145,11 @@ ALTER TABLE employees
     ADD CONSTRAINT fk_dept FOREIGN KEY (dept_id) REFERENCES departments (dept_id);
 
 -- Add some sample rows in the departments table
- INSERT INTO departments VALUES (5001, "Sales");
+ INSERT INTO departments VALUES (5001, 'Sales');
 INSERT INTO departments
-VALUES (5002, "Development");
+VALUES (5002, 'Development');
 INSERT INTO departments
-VALUES (5003, "Marketing");
+VALUES (5003, 'Marketing');
 
 -- Try updating the dept_id of an employee with an existing department
 UPDATE employees
@@ -207,7 +195,7 @@ and vice a versa.
 For example, an employee may work on many projects at a time.
 A project may have many employees working on it.
 
-To represent an `M-M` relationship in MySQL, we need a **new relationship table**
+To represent an `M-M` relationship in PostgreSQL, we need a **new relationship table**
 that uses two foreign keys (primary keys from both tables). For such a relationship
 table, primary key is composed of two foreign keys.
 For example, one entry in the employee-project relationship table represents
@@ -226,15 +214,15 @@ CREATE TABLE projects
 (
     proj_id    int,
     proj_name  varchar(50),
-    start_date datetime
+    start_date timestamp
 );
 
 -- Insert sample values
-INSERT INTO projects VALUES(9001, "Jazz", "2018-01-01");
+INSERT INTO projects VALUES(9001, 'Jazz', '2018-01-01');
 INSERT INTO projects
-VALUES (9002, "Mellow", "2019-03-01");
+VALUES (9002, 'Mellow', '2019-03-01');
 INSERT INTO projects
-VALUES (9003, "Classical", "2020-01-01");
+VALUES (9003, 'Classical', '2020-01-01');
 
 -- create emp_proj relationship table with composite primary key
 CREATE TABLE emp_proj
@@ -289,7 +277,7 @@ FROM employees as E
      INNER JOIN
      departments as D
      ON E.dept_id = D.dept_id
-WHERE D.dept_name = "Sales";
+WHERE D.dept_name = 'Sales';
 
 -- Comma (,) or CROSS join
 SELECT
@@ -297,7 +285,7 @@ SELECT
 FROM employees as E,
      departments as D
 where E.dept_id = D.dept_id
-  and D.dept_name = "Sales";
+  and D.dept_name = 'Sales';
 ```
 
 #### Exercise
@@ -305,14 +293,14 @@ where E.dept_id = D.dept_id
 1. Guess the output of the following query.
    `SELECT count(*) FROM employees, departments, projects;`
 
-2. Print the sum of salary of all employees that work in "Sales" department and
-   work on "Jazz" project.
+2. Print the sum of salary of all employees that work in 'Sales' department and
+   work on 'Jazz' project.
 
 #### Essence
 
-> When we use a comma (,) after the FROM clause of MySQL, it gives you the vector product of two tables.
+> When we use a comma (,) after the FROM clause of PostgreSQL, it gives you the vector product of two tables.
 
-> In MySQL, there is no difference between
+> In PostgreSQL, there is no difference between
 > (1) An INNER JOIN with columns-matching condition after ON and
 > (2) The join using a comma (,) between tables and where clause with condition for columns-matching.
 
@@ -616,7 +604,7 @@ async function seedDatabase() {
   const CREATE_TABLE = `
         CREATE TABLE IF NOT EXISTS big
         (
-            id_pk INT PRIMARY KEY AUTO_INCREMENT,
+            id_pk SERIAL PRIMARY KEY,
             number   INT
         );`;
 
@@ -626,7 +614,7 @@ async function seedDatabase() {
     rows.push([i]);
     if (i % 10000 === 0) {
       console.log("i=" + i);
-      await execQuery("INSERT INTO big(number) VALUES ?", [rows]);
+      await execQuery("INSERT INTO big(number) VALUES " + rows.map(() => "(?)").join(","), rows.flat());
       rows = [];
     }
   }
@@ -637,58 +625,57 @@ The following two queries will show the difference (in execution time) between u
 when we retrieve the data.
 
 ```sql
-mysql> SELECT * FROM big WHERE id_pk = 1000;
-+-------+--------+
-| id_pk | number |
-+-------+--------+
-|  1000 |   1000 |
-+-------+--------+
-1 row in set (0.00 sec)
+postgres=# SELECT * FROM big WHERE id_pk = 1000;
+ id_pk | number 
+-------+--------
+  1000 |   1000
+(1 row)
 
-mysql> SELECT * FROM big WHERE number = 1000;
-+-------+--------+
-| id_pk | number |
-+-------+--------+
-|  1000 |   1000 |
-+-------+--------+
-1 row in set (0.19 sec)
+Time: 0.123 ms
+
+postgres=# SELECT * FROM big WHERE number = 1000;
+ id_pk | number 
+-------+--------
+  1000 |   1000
+(1 row)
+
+Time: 190.456 ms
 ```
 
 The first query's result is instant because the `WHERE` clause uses the `id_pk` column which is a primary key.
-Note that for a primary key column, MySQL automatically creates an index. This can be confirmed with the following query
+Note that for a primary key column, PostgreSQL automatically creates an index. This can be confirmed with the following query
 
 ```sql
-mysql> SHOW indexes from big;
-+-------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+
-| Table | Non_unique | Key_name | Seq_in_index | Column_name | Collation | Cardinality | Sub_part | Packed | Null | Index_type |
-+-------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+
-| big   |          0 | PRIMARY  |            1 | id_pk       | A         |    12769223 |     NULL |   NULL |      | BTREE      |
-+-------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+
-1 row in set (0.01 sec)
+postgres=# \d big
+                              Table "public.big"
+ Column |  Type   | Collation | Nullable |             Default              
+--------+---------+-----------+----------+----------------------------------
+ id_pk  | integer |           | not null | nextval('big_id_pk_seq'::regclass)
+ number | integer |           |          | 
+Indexes:
+    "big_pkey" PRIMARY KEY, btree (id_pk)
 ```
 
-The query `SELECT * FROM big WHERE number = 1000` takes longer to run because the column `number` is not indexed. MySQL
-has to
+The query `SELECT * FROM big WHERE number = 1000` takes longer to run because the column `number` is not indexed. PostgreSQL has to
 go in the `big` table and search row by row to check which row contains the value 1000 in `number` column.
 
-The `describe` command shows how many rows are accessed to fetch the result of the query.
-Check the `rows` column in the output of the following queries.
+The `EXPLAIN` command shows how many rows are accessed to fetch the result of the query.
+Check the execution plan in the output of the following queries.
 
 ```sql
-mysql> DESCRIBE SELECT * FROM big WHERE number = 1000;
-+----+-------------+-------+------------+------+---------------+------+---------+------+----------+----------+-------------+
-| id | select_type | table | partitions | type | possible_keys | key  | key_len | ref  | rows     | filtered | Extra       |
-+----+-------------+-------+------------+------+---------------+------+---------+------+----------+----------+-------------+
-|  1 | SIMPLE      | big   | NULL       | ALL  | NULL          | NULL | NULL    | NULL | 998568   |    10.00 | Using where |
-+----+-------------+-------+------------+------+---------------+------+---------+------+----------+----------+-------------+
-1 row in set, 1 warning (0.00 sec)
+postgres=# EXPLAIN SELECT * FROM big WHERE number = 1000;
+                       QUERY PLAN                        
+---------------------------------------------------------
+ Seq Scan on big  (cost=0.00..18334.00 rows=1 width=8)
+   Filter: (number = 1000)
+(2 rows)
 
-mysql> DESCRIBE SELECT * FROM big WHERE id_pk = 1000;
-+----+-------------+-------+------------+-------+---------------+---------+---------+-------+------+----------+-------+
-| id | select_type | table | partitions | type  | possible_keys | key     | key_len | ref   | rows | filtered | Extra |
-+----+-------------+-------+------------+-------+---------------+---------+---------+-------+------+----------+-------+
-|  1 | SIMPLE      | big   | NULL       | const | PRIMARY       | PRIMARY | 4       | const |    1 |   100.00 | NULL  |
-+----+-------------+-------+------------+-------+---------------+---------+---------+-------+------+----------+-------+
+postgres=# EXPLAIN SELECT * FROM big WHERE id_pk = 1000;
+                               QUERY PLAN                               
+------------------------------------------------------------------------
+ Index Scan using big_pkey on big  (cost=0.42..8.44 rows=1 width=8)
+   Index Cond: (id_pk = 1000)
+(2 rows)
 ```
 
 We can now create an index on the `number` column as follows:
@@ -700,41 +687,40 @@ CREATE INDEX idx_number ON big(number);
 Now we can re-run the select query which will be faster:
 
 ```sql
-mysql> SELECT * FROM big WHERE number = 1000;
-+-------+--------+
-| id_pk | number |
-+-------+--------+
-|  1000 |   1000 |
-+-------+--------+
-1 row in set (0.00 sec)
+postgres=# SELECT * FROM big WHERE number = 1000;
+ id_pk | number 
+-------+--------
+  1000 |   1000
+(1 row)
+
+Time: 0.245 ms
 ```
 
 We have seen that having an index helps in fetching the data faster. However, for updates/inserts, having an index
-is more expensive. After doing an update to the indexed column, MySQL also has to internally update indexes for that
+is more expensive. After doing an update to the indexed column, PostgreSQL also has to internally update indexes for that
 column.
 
 Look at the query below:
 
 ```
-mysql> UPDATE big SET number = number + 100000;
-Query OK, 1000000 rows affected (14.01 sec)
-Rows matched: 1000000  Changed: 1000000  Warnings: 0
+postgres=# UPDATE big SET number = number + 100000;
+UPDATE 1000000
+Time: 14010.234 ms (00:14.010)
 ```
 
 Now, let us remove the index
 
 ```sql
-mysql> DROP INDEX idx_number ON big;
-Query OK, 0 rows affected (1.59 sec)
-Records: 0  Duplicates: 0  Warnings: 0
+postgres=# DROP INDEX idx_number;
+DROP INDEX
 ```
 
 and re-run the update query.
 
 ```sql
-mysql> UPDATE big SET number = number + 100000;
-Query OK, 1000000 rows affected (6.14 sec)
-Rows matched: 1000000  Changed: 1000000  Warnings: 0
+postgres=# UPDATE big SET number = number + 100000;
+UPDATE 1000000
+Time: 6140.567 ms (00:06.141)
 ```
 
 We can see that without the index, update of the number column is much faster (6 seconds as compared to 14).
@@ -745,9 +731,9 @@ Create a composite index using columns (`employee_name and salary`) on the `empl
 performance of following queries
 
 ```sql
-DESCRIBE SELECT * FROM employees WHERE employee_name = 'John' and salary = 50000
-DESCRIBE SELECT * FROM employees WHERE employee_name = 'John'
-DESCRIBE SELECT * FROM employees WHERE salary = 50000
+EXPLAIN SELECT * FROM employees WHERE employee_name = 'John' and salary = 50000;
+EXPLAIN SELECT * FROM employees WHERE employee_name = 'John';
+EXPLAIN SELECT * FROM employees WHERE salary = 50000;
 ```
 
 Make sure to have at least 100 records in the `employees` table including someone named `John` with salary 50000.
@@ -765,7 +751,7 @@ However, they do also add overhead to the database (especially for updates/inser
 - It makes use of the concepts like entities and relations.
 - Entity Relationship Diagrams (ERD) are used widely in domain modeling.
 - In ERD, **entities** are shown by boxes and are abstract things. E.g. John Smith is an instance. Student is the
-  entity. An entity in ERD is converted to a table in MySQL.
+  entity. An entity in ERD is converted to a table in PostgreSQL.
 - Entities are connected to each other with a line (**relationships**) with **cardinalities** (1-1, 1-M etc.).
 - Entities have **attributes** shown in the shape of an ellipse. An attribute of the entity is translated to
   the column of the corresponding table.

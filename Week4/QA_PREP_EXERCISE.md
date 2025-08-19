@@ -14,5 +14,5 @@ to a document-based database. Think about the following:
 ## Discussion (Try to write answers to these questions in text, provide queries and commands when necessary)
 
 - What made you decide when to embed information? What assumptions did you make?
-- If you were given MySQL and MongoDB as choices to build the recipe's database at the beginning, which one would you
+- If you were given PostgreSQL and MongoDB as choices to build the recipe's database at the beginning, which one would you
   choose and why?

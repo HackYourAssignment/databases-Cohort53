@@ -137,7 +137,7 @@ end.
 
 ## 4. Code along
 
-In this week's code along you'll be building a complete CRUD app. However, instead of using MySQL it'll be MongoDB you'
+In this week's code along you'll be building a complete CRUD app. However, instead of using PostgreSQL it'll be MongoDB you'
 ll use as a database!
 
 - [CRUD app from scratch using Node.js](https://www.youtube.com/watch?v=CyTWPr_WwdI)
