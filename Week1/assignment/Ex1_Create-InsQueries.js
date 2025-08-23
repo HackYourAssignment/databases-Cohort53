@@ -129,32 +129,6 @@ async function seedDatabase() {
       room_no: 203,
     },
   ];
-  // Add the INSERT statements for rooms and meetings
-  const INSERT_ROOMS = `
-    INSERT INTO Room (room_no, room_name, floor_number)
-    VALUES ${rooms
-      .map(
-        (room) => `(${room.room_no}, '${room.room_name}', ${room.floor_number})`
-      )
-      .join(",")}
-    ON CONFLICT (room_no) DO NOTHING;
-  `;
-
-  const INSERT_MEETINGS = `
-    INSERT INTO Meeting (meeting_no, meeting_title, starting_time, ending_time, room_no)
-    VALUES ${meetings
-      .map(
-        (meeting) => `(
-      ${meeting.meeting_no}, 
-      '${meeting.meeting_title}', 
-      '${meeting.starting_time.toISOString()}', 
-      '${meeting.ending_time.toISOString()}', 
-      ${meeting.room_no}
-    )`
-      )
-      .join(",")}
-    ON CONFLICT (meeting_no) DO NOTHING;
-  `;
 
   try {
     await client.connect();
