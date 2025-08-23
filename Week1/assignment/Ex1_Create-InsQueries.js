@@ -32,7 +32,8 @@ async function seedDatabase() {
       meeting_title VARCHAR(50),
       starting_time DATE,
       ending_time DATE,
-      room_no REFERENCES Room(room_no)
+      room_no INTEGER,
+      CONSTRAINT fk_room_no FOREIGN KEY (room_no) REFERENCES Room(room_no)
     )`;
 
   const invitees = [
@@ -63,6 +64,98 @@ async function seedDatabase() {
     },
   ];
 
+  const rooms = [
+    {
+      room_no: 101,
+      room_name: "Amsterdam",
+      floor_number: 1,
+    },
+    {
+      room_no: 102,
+      room_name: "Rotterdam",
+      floor_number: 1,
+    },
+    {
+      room_no: 201,
+      room_name: "Utrecht",
+      floor_number: 2,
+    },
+    {
+      room_no: 202,
+      room_name: "The Hague",
+      floor_number: 2,
+    },
+    {
+      room_no: 203,
+      room_name: "Eindhoven",
+      floor_number: 2,
+    },
+  ];
+
+  const meetings = [
+    {
+      meeting_no: 1,
+      meeting_title: "Team Standup",
+      starting_time: new Date("2025-09-01T09:00:00"),
+      ending_time: new Date("2025-09-01T09:30:00"),
+      room_no: 101,
+    },
+    {
+      meeting_no: 2,
+      meeting_title: "Project Kickoff",
+      starting_time: new Date("2025-09-01T10:00:00"),
+      ending_time: new Date("2025-09-01T11:30:00"),
+      room_no: 201,
+    },
+    {
+      meeting_no: 3,
+      meeting_title: "Code Review",
+      starting_time: new Date("2025-09-02T14:00:00"),
+      ending_time: new Date("2025-09-02T15:30:00"),
+      room_no: 202,
+    },
+    {
+      meeting_no: 4,
+      meeting_title: "Sprint Planning",
+      starting_time: new Date("2025-09-03T13:00:00"),
+      ending_time: new Date("2025-09-03T15:00:00"),
+      room_no: 102,
+    },
+    {
+      meeting_no: 5,
+      meeting_title: "Retrospective",
+      starting_time: new Date("2025-09-04T15:00:00"),
+      ending_time: new Date("2025-09-04T16:30:00"),
+      room_no: 203,
+    },
+  ];
+  // Add the INSERT statements for rooms and meetings
+  const INSERT_ROOMS = `
+    INSERT INTO Room (room_no, room_name, floor_number)
+    VALUES ${rooms
+      .map(
+        (room) => `(${room.room_no}, '${room.room_name}', ${room.floor_number})`
+      )
+      .join(",")}
+    ON CONFLICT (room_no) DO NOTHING;
+  `;
+
+  const INSERT_MEETINGS = `
+    INSERT INTO Meeting (meeting_no, meeting_title, starting_time, ending_time, room_no)
+    VALUES ${meetings
+      .map(
+        (meeting) => `(
+      ${meeting.meeting_no}, 
+      '${meeting.meeting_title}', 
+      '${meeting.starting_time.toISOString()}', 
+      '${meeting.ending_time.toISOString()}', 
+      ${meeting.room_no}
+    )`
+      )
+      .join(",")}
+    ON CONFLICT (meeting_no) DO NOTHING;
+  `;
+
   try {
     await client.connect();
     console.log("Connected to PostgreSQL database!");
@@ -73,6 +166,9 @@ async function seedDatabase() {
 
     await client.query(CREATE_Room_TABLE);
     console.log("Room table created successfully");
+
+    await client.query(CREATE_Meeting_TABLE);
+    console.log("Meeting table created successfully");
 
     // Insert invitees
     for (const invitee of invitees) {
@@ -89,6 +185,38 @@ async function seedDatabase() {
 
       await client.query(insertQuery, values);
       console.log(`Inserted invitee: ${invitee.invitee_name}`);
+    }
+
+    // Insert rooms
+    for (const room of rooms) {
+      const insertQuery = `
+        INSERT INTO Room (room_no, room_name, floor_number)
+        VALUES ($1, $2, $3)
+        ON CONFLICT (room_no) DO NOTHING
+      `;
+      const values = [room.room_no, room.room_name, room.floor_number];
+
+      await client.query(insertQuery, values);
+      console.log(`Inserted room: ${room.room_name}`);
+    }
+
+    // Insert meetings
+    for (const meeting of meetings) {
+      const insertQuery = `
+        INSERT INTO Meeting (meeting_no, meeting_title, starting_time, ending_time, room_no)
+        VALUES ($1, $2, $3, $4, $5)
+        ON CONFLICT (meeting_no) DO NOTHING
+      `;
+      const values = [
+        meeting.meeting_no,
+        meeting.meeting_title,
+        meeting.starting_time,
+        meeting.ending_time,
+        meeting.room_no,
+      ];
+
+      await client.query(insertQuery, values);
+      console.log(`Inserted meeting: ${meeting.meeting_title}`);
     }
 
     console.log("Database seeded successfully!");
