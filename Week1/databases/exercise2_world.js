@@ -54,10 +54,10 @@ async function runQueries() {
     );
     console.log("10. World population:", q10.rows[0].world_population);
   } catch (err) {
-    console.error("❌ Query error:", err);
+    console.error("Query error:", err);
   } finally {
     await client.end();
-    console.log("🔌 Connection closed.");
+    console.log("Connection closed.");
   }
 }
 
