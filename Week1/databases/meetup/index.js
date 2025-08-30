@@ -1,11 +1,11 @@
 const { Client } = require('pg');
 async function main(){
 const client = new Client({
-  user: 'hyfuser', // Your PostgreSQL username
-  host: 'localhost', // Your database server address
-  database: 'meetup', // The database you just created
-  password: 'hyfpassword', // Replace with your actual password
-  port: 5432, // The default PostgreSQL port
+  user: 'hyfuser', 
+  host: 'localhost', 
+  database: 'meetup',
+  password: 'hyfpassword',
+  port: 5432, 
 });
 try{
     await client.connect();
@@ -13,12 +13,12 @@ try{
     const createInviteeTableQuery=`CREATE TABLE IF NOT EXISTS invitee(
     invitee_no SERIAL PRIMARY KEY,
     invitee_name VARCHAR(255) NOT NULL,
-    INVITEE_BY VARCHAR(255) NOT NULL);`;
+    invitee_by VARCHAR(255) NOT NULL);`;
 
     const creatRoomTableQuery=`CREATE TABLE IF NOT EXISTS room(
     room_no SERIAL PRIMARY KEY,
     room_name VARCHAR(255) NOT NULL,
-    floor_number INT NOT NULL);`;
+    floor_number SMALLINT NOT NULL);`;
 
     const creatMeetingTableQuery=`CREATE TABLE IF NOT EXISTS meeting(
     meeting_no SERIAL PRIMARY KEY,
