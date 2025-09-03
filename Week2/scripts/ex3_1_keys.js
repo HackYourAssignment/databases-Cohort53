@@ -4,8 +4,8 @@
 
 import dotenv from "dotenv";
 import pg from "pg";
-
 dotenv.config();
+
 const { Client } = pg;
 
 const DB_NAME = "research";

@@ -1,8 +1,11 @@
 // ex3_4_aggregates.js
 // Week2 – Exercise 3.4 (Aggregate Functions)
 
-require("dotenv").config();
-const { Client } = require("pg");
+import dotenv from "dotenv";
+import pg from "pg";
+dotenv.config();
+
+const { Client } = pg;
 
 const db = new Client({
   host: process.env.PGHOST,

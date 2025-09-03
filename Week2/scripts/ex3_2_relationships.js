@@ -2,8 +2,11 @@
 // Week2 – Exercise 3.2 (Relationships)
 // Adds research_papers, author_papers; inserts 15 authors, 30 papers, and links.
 
-require("dotenv").config();
-const { Client } = require("pg");
+import dotenv from "dotenv";
+import pg from "pg";
+dotenv.config();
+
+const { Client } = pg;
 
 const DB_NAME = "research";
 const db = new Client({
@@ -64,7 +67,6 @@ async function run() {
       );
     }
 
-    // наставники: сделаем 4х менторов для примера
     await db.query(
       `UPDATE authors SET mentor = 4  WHERE author_id IN (1,3,5);`
     );
@@ -78,7 +80,7 @@ async function run() {
       `UPDATE authors SET mentor = 4  WHERE author_id IN (13,14,15);`
     );
 
-    // 3) Seed 30 papers (генерируем названия)
+    // 3) Seed 30 papers
     await db.query(`TRUNCATE research_papers RESTART IDENTITY CASCADE;`);
     const confs = ["ICDB", "SIGMOD", "VLDB", "ICDE", "EDBT"];
     const today = new Date();
@@ -96,10 +98,9 @@ async function run() {
       );
     }
 
-    // 4) Link authors to papers (каждая статья с 1–3 авторами)
+    // 4) Link authors to papers
     await db.query(`TRUNCATE author_papers;`);
     for (let paperId = 1; paperId <= 30; paperId++) {
-      // выберем 1–3 авторов по простому правилу
       const a1 = ((paperId + 0) % 15) + 1;
       const a2 = ((paperId + 3) % 15) + 1;
       const a3 = ((paperId + 7) % 15) + 1;

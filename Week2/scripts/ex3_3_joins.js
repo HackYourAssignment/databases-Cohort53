@@ -1,8 +1,11 @@
 // ex3_3_joins.js
 // Week2 – Exercise 3.3 (Joins)
 
-require("dotenv").config();
-const { Client } = require("pg");
+import dotenv from "dotenv";
+import pg from "pg";
+dotenv.config();
+
+const { Client } = pg;
 
 const db = new Client({
   host: process.env.PGHOST,
