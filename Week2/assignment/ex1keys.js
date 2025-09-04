@@ -27,12 +27,10 @@ async function seedDatabase(client) {
     )`;
 
   const ALTER_AUTHORS_TABLE = `
-    ALTER TABLE authors 
+    ALTER TABLE authors
     ADD COLUMN IF NOT EXISTS mentor INTEGER,
-    ADD CONSTRAINT fk_mentor
-      FOREIGN KEY (mentor) 
-      REFERENCES authors(author_id) 
-      ON DELETE CASCADE;`;
+    ADD CONSTRAINT fk_mentor FOREIGN KEY (mentor) REFERENCES authors(author_id) ON DELETE CASCADE
+    `;
 
   try {
     await client.connect();
