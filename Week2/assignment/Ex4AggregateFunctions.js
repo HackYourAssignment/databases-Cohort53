@@ -38,6 +38,26 @@ async function createDBviews(client) {
       JSON.stringify(queryRes.rows, null, 2)
     );
 
+    // Create a view for the sum of the research papers published by all female authors.
+    const CREATE_FEMALE_PAPER_NUMBER_VIEW = `
+      CREATE OR REPLACE VIEW female_paper_number AS
+        SELECT 
+          COUNT(DISTINCT rp.paper_id) as publications_sum
+        FROM
+          research_papers rp
+          JOIN paper_authors pa ON rp.paper_id = pa.paper_id
+          JOIN authors a ON a.author_id = pa.author_id
+        WHERE a.gender = 'Female'
+    `;
+
+    await client.query(CREATE_FEMALE_PAPER_NUMBER_VIEW);
+    // Query the view to verify it works
+    queryRes = await client.query("SELECT * FROM female_paper_number");
+    console.log(
+      "\nThe sum of the research papers published by all female authors:",
+      JSON.stringify(queryRes.rows, null, 2)
+    );
+
     console.log("Database seeding completed successfully!");
   } catch (error) {
     console.error("Error seeding database:", error);
