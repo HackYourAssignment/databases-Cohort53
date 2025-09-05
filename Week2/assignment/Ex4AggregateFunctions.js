@@ -31,7 +31,7 @@ async function createDBviews(client) {
     `;
 
     await client.query(CREATE_AUTHOR_QUANTITY_VIEW);
-    // Query the view to verify it works
+
     queryRes = await client.query("SELECT * FROM paper_authors_qty");
     console.log(
       "\nResearch papers and the number of their authors:",
@@ -51,7 +51,7 @@ async function createDBviews(client) {
     `;
 
     await client.query(CREATE_FEMALE_PAPER_NUMBER_VIEW);
-    // Query the view to verify it works
+
     queryRes = await client.query("SELECT * FROM female_paper_number");
     console.log(
       "\nThe sum of the research papers published by all female authors:",
@@ -69,10 +69,28 @@ async function createDBviews(client) {
     `;
 
     await client.query(CREATE_HINDEX_VIEW);
-    // Query the view to verify it works
     queryRes = await client.query("SELECT * FROM h_index");
     console.log(
       "\nThe average of the h-index of all authors per university:",
+      JSON.stringify(queryRes.rows, null, 2)
+    );
+
+    // Create a view for the sum of the research papers per university.
+    const CREATE_PAPERS_PER_UNIVERSITY_VIEW = `
+      CREATE OR REPLACE VIEW papers_per_university AS
+        SELECT
+          a.university,
+          COUNT(DISTINCT rp.paper_id) as university_publications
+        FROM authors a
+        JOIN paper_authors pa ON pa.author_id = a.author_id
+        JOIN research_papers rp ON rp.paper_id = pa.paper_id
+        GROUP BY a.university
+    `;
+
+    await client.query(CREATE_PAPERS_PER_UNIVERSITY_VIEW);
+    queryRes = await client.query("SELECT * FROM papers_per_university");
+    console.log(
+      "\nThe sum of the research papers per university:",
       JSON.stringify(queryRes.rows, null, 2)
     );
 
