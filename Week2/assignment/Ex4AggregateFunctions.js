@@ -94,6 +94,40 @@ async function createDBviews(client) {
       JSON.stringify(queryRes.rows, null, 2)
     );
 
+    // Create a view for minimum of the h-index of all authors per university.
+    const CREATE_HINDEX_MIN_VIEW = `
+      CREATE OR REPLACE VIEW h_index_min AS
+        SELECT
+          university,
+          MIN(h_index) as min_h_index
+        FROM authors
+        GROUP BY university
+    `;
+
+    await client.query(CREATE_HINDEX_MIN_VIEW);
+    queryRes = await client.query("SELECT * FROM h_index_min");
+    console.log(
+      "\nThe minimum of the h-index of all authors per university:",
+      JSON.stringify(queryRes.rows, null, 2)
+    );
+
+    // Create a view for maximum of the h-index of all authors per university.
+    const CREATE_HINDEX_MAX_VIEW = `
+      CREATE OR REPLACE VIEW h_index_max AS
+        SELECT
+          university,
+          MAX(h_index) as max_h_index
+        FROM authors
+        GROUP BY university
+    `;
+
+    await client.query(CREATE_HINDEX_MAX_VIEW);
+    queryRes = await client.query("SELECT * FROM h_index_max");
+    console.log(
+      "\nThe maximum of the h-index of all authors per university:",
+      JSON.stringify(queryRes.rows, null, 2)
+    );
+
     console.log("Database seeding completed successfully!");
   } catch (error) {
     console.error("Error seeding database:", error);

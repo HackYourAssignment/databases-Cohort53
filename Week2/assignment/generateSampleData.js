@@ -58,7 +58,7 @@ const authors = [
   },
   {
     name: "James Martin",
-    university: "Imperial College",
+    university: "UCLA",
     dob: "1983-06-18",
     hIndex: 33,
     gender: "Male",
@@ -86,21 +86,21 @@ const authors = [
   },
   {
     name: "Thomas Walker",
-    university: "UCL",
+    university: "MIT",
     dob: "1974-01-09",
     hIndex: 44,
     gender: "Male",
   },
   {
     name: "Nancy Hall",
-    university: "University of Toronto",
+    university: "MIT",
     dob: "1984-08-07",
     hIndex: 27,
     gender: "Female",
   },
   {
     name: "Charles Allen",
-    university: "National University of Singapore",
+    university: "MIT",
     dob: "1977-11-16",
     hIndex: 32,
     gender: "Male",
