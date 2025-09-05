@@ -134,8 +134,8 @@ async function seedDatabase(client) {
         rp.paper_title
       FROM 
         authors a
-        JOIN LEFT paper_authors pa ON a.author_id = pa.author_id
-        JOIN research_papers rp ON pa.paper_id = rp.paper_id
+        LEFT JOIN paper_authors pa ON a.author_id = pa.author_id
+        LEFT JOIN research_papers rp ON pa.paper_id = rp.paper_id
     `;
 
     await client.query(CREATE_AUTHORS_PAPERS_VIEW);
