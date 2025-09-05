@@ -58,6 +58,24 @@ async function createDBviews(client) {
       JSON.stringify(queryRes.rows, null, 2)
     );
 
+    // Create a view for Average of the h-index of all authors per university.
+    const CREATE_HINDEX_VIEW = `
+      CREATE OR REPLACE VIEW h_index AS
+        SELECT
+          university,
+          AVG(h_index) as average_h_index
+        FROM authors
+        GROUP BY university
+    `;
+
+    await client.query(CREATE_HINDEX_VIEW);
+    // Query the view to verify it works
+    queryRes = await client.query("SELECT * FROM h_index");
+    console.log(
+      "\nThe average of the h-index of all authors per university:",
+      JSON.stringify(queryRes.rows, null, 2)
+    );
+
     console.log("Database seeding completed successfully!");
   } catch (error) {
     console.error("Error seeding database:", error);
