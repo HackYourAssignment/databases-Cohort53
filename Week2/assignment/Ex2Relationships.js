@@ -11,8 +11,8 @@ const config = {
 
 const client = new Client(config);
 
-async function seedDatabase(client) {
-  const CREATE_RESEARCH_PAPERS_TABLE = `
+async function createTables(client) {
+    const CREATE_RESEARCH_PAPERS_TABLE = `
     CREATE TABLE IF NOT EXISTS research_papers (
       paper_id SERIAL PRIMARY KEY,
       paper_title VARCHAR(50) NOT NULL,
@@ -20,12 +20,20 @@ async function seedDatabase(client) {
       publish_date DATE
     )`;
 
-  const ALTER_RESEARCH_PAPERS_TABLE = `
-    ALTER TABLE research_papers
-    ADD COLUMN IF NOT EXISTS author_id SMALLINT,
-    ADD CONSTRAINT fk_author_id
-    FOREIGN KEY (author_id) REFERENCES authors(author_id) ON DELETE CASCADE
-    `;
+  const CREATE_PAPER_AUTHORS_TABLE = `
+    CREATE TABLE IF NOT EXISTS paper_authors (
+      paper_id INTEGER NOT NULL,
+      author_id INTEGER NOT NULL,
+      PRIMARY KEY (paper_id, author_id),
+      CONSTRAINT fk_paper
+        FOREIGN KEY (paper_id) 
+        REFERENCES research_papers(paper_id) 
+        ON DELETE CASCADE,
+      CONSTRAINT fk_author
+        FOREIGN KEY (author_id) 
+        REFERENCES authors(author_id) 
+        ON DELETE CASCADE
+    )`;
 
   try {
     await client.connect();
@@ -33,12 +41,11 @@ async function seedDatabase(client) {
 
     // Create tables
     await client.query(CREATE_RESEARCH_PAPERS_TABLE);
-    await client.query(ALTER_RESEARCH_PAPERS_TABLE);
+    await client.query(CREATE_PAPER_AUTHORS_TABLE);
   } catch (error) {
     console.error("Error creating tables:", error);
   } finally {
     await client.end();
   }
 }
-
-seedDatabase(client);
+createTables(client);

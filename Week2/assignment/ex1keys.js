@@ -11,7 +11,7 @@ const config = {
 
 const client = new Client(config);
 
-async function seedDatabase(client) {
+async function createTables(client) {
   const CREATE_GENDER_TYPE = `
     CREATE TYPE GENDER AS ENUM ('Male', 'Female', 'X');
   `;
@@ -47,4 +47,4 @@ async function seedDatabase(client) {
   }
 }
 
-seedDatabase(client);
+createTables(client);

@@ -1,5 +1,5 @@
 import { Client } from "pg";
-import { authors, researchPapers } from "./generateSampleData.js";
+import { authors, researchPapers, paperAuthors } from "./generateSampleData.js";
 
 // Database connection configuration
 const config = {
@@ -55,11 +55,11 @@ async function insertResearchPapers(client) {
     for (const paper of researchPapers) {
       const query = {
         text: `
-          INSERT INTO research_Papers (paper_title, conference, publish_date, author_id)
-          VALUES ($1, $2, $3, $4)
+          INSERT INTO research_papers (paper_title, conference, publish_date)
+          VALUES ($1, $2, $3)
           RETURNING paper_id
         `,
-        values: [paper.title, paper.conference, paper.date, paper.authorId],
+        values: [paper.title, paper.conference, paper.date],
       };
 
       const result = await client.query(query);
@@ -74,7 +74,31 @@ async function insertResearchPapers(client) {
   }
 }
 
-async function seedDatabase() {
+async function insertPaperAuthors(client) {
+  try {
+    for (const paperAuthor of paperAuthors) {
+      const query = {
+        text: `
+          INSERT INTO paper_authors (paper_id, author_id)
+          VALUES ($1, $2)
+          ON CONFLICT DO NOTHING
+        `,
+        values: [paperAuthor.paper_id, paperAuthor.authorId],
+      };
+
+      await client.query(query);
+      console.log(
+        `Linked paper ${paperAuthor.paper_id} with author ${paperAuthor.authorId}`
+      );
+    }
+    console.log("All paper-author relationships inserted successfully");
+  } catch (error) {
+    console.error("Error inserting paper-author relationships:", error);
+    throw error;
+  }
+}
+
+async function seedDatabase(client) {
   try {
     await client.connect();
     console.log("Connected to PostgreSQL database!");
@@ -82,6 +106,7 @@ async function seedDatabase() {
     // Insert new data
     await insertAuthors(client);
     await insertResearchPapers(client);
+    await insertPaperAuthors(client);
 
     // Create a view for all authors and their corresponding mentors
     const CREATE_AUTHOR_MENTOR_VIEW = `
@@ -109,7 +134,8 @@ async function seedDatabase() {
         rp.paper_title
       FROM 
         authors a
-        LEFT JOIN research_papers rp ON a.author_id = rp.author_id
+        JOIN LEFT paper_authors pa ON a.author_id = pa.author_id
+        JOIN research_papers rp ON pa.paper_id = rp.paper_id
     `;
 
     await client.query(CREATE_AUTHORS_PAPERS_VIEW);
@@ -121,7 +147,7 @@ async function seedDatabase() {
         JSON.stringify(queryRes.rows, null, 2)
       );
     } else {
-      console.log("There is no vegetarian recipes with potatos in our DB");
+      console.log("There are no papers in the database");
     }
 
     console.log("Database seeding completed successfully!");
@@ -133,4 +159,4 @@ async function seedDatabase() {
 }
 
 // Execute the seeding function
-seedDatabase();
+seedDatabase(client);
