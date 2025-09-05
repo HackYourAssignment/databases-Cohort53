@@ -6,7 +6,7 @@ const config = {
   host: "localhost",
   user: "hyfuser",
   password: "hyfpassword",
-  database: "dbassignmentw2",
+  database: "DBassignmentW2",
   port: 5432,
 };
 
