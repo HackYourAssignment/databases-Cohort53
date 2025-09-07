@@ -39,7 +39,6 @@ async function seedDatabase(client) {
     await client.query("COMMIT");
     console.log("Transaction completed!");
   } catch (error) {
-    await client.query("ROLLBACK");
     console.error("Error seeding database:", error);
   } finally {
     await client.end();
