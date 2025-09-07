@@ -1,0 +1,40 @@
+export const accounts = [
+  { account_number: 101, balance: 5000 },
+  { account_number: 102, balance: 12000 },
+  { account_number: 103, balance: 7500 },
+  { account_number: 104, balance: 3000 },
+  { account_number: 105, balance: 9500 },
+];
+
+export const account_changes = [
+  {
+    account_number: 101,
+    amount: 1000,
+    changed_date: "2025-09-01",
+    remark: "Salary deposit",
+  },
+  {
+    account_number: 102,
+    amount: -500,
+    changed_date: "2025-09-02",
+    remark: "Grocery shopping",
+  },
+  {
+    account_number: 103,
+    amount: 2000,
+    changed_date: "2025-09-03",
+    remark: "Freelance payment",
+  },
+  {
+    account_number: 104,
+    amount: -1000,
+    changed_date: "2025-09-04",
+    remark: "Rent payment",
+  },
+  {
+    account_number: 105,
+    amount: 1500,
+    changed_date: "2025-09-05",
+    remark: "Gift received",
+  },
+];

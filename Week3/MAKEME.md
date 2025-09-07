@@ -49,8 +49,21 @@ Please help the manger by using the knowledge of database normal forms.
 Save all answers in a text file / MD file.
 
 1. What columns violate 1NF?
+
+food_code, food_description
+
 2. What entities do you recognize that could be extracted?
+
+member, dinner, venue, food
+
 3. Name all the tables and columns that would make a 3NF compliant solution.
+
+- member: member_id, member_name, member_address
+- dinner: dinner_id, dinner_date, venue_code
+- dinner_member: dinner_id, member_id
+- venue: venue_code, venue_description
+- dinner_food: dinner_id, food_code
+- food: food_code, food_description
 
 ```
 +-----------+---------------+----------------+-----------+-------------+------------+-------------------+-----------+------------------+
