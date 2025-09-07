@@ -2,13 +2,15 @@ const { MongoClient, ServerApiVersion } = require("mongodb");
 const { config: configDotenv } = require("dotenv");
 configDotenv({ silent: true });
 const { seedDatabase } = require("./seedDatabase.js");
+let req;
+let res;
 
 async function createEpisodeExercise(client) {
   const bobRossCollection = await client
     .db("databaseWeek3")
     .collection("bob_ross_episodes");
 
-  const documents = {
+  req = {
     episode: "S09E13",
     title: "MOUNTAIN HIDE-AWAY",
     elements: [
@@ -26,35 +28,39 @@ async function createEpisodeExercise(client) {
     ],
   };
 
-  const id = await bobRossCollection.insertOne(documents);
+  res = await bobRossCollection.insertOne(req);
 
   console.log(
-    `Created season 9 episode 13 and the document got the id ${id.insertedId}`
+    `Created season 9 episode 13 and the document got the id ${res.insertedId}`
   );
 }
 
 async function findEpisodesExercises(client) {
-  /**
-   * Complete the following exercises.
-   * The comments indicate what to do and what the result should be!
-   */
-
+  const bobRossCollection = await client
+    .db("databaseWeek3")
+    .collection("bob_ross_episodes");
+  req = { episode: "S02E02" };
+  res = await bobRossCollection.findOne(req);
   // Find the title of episode 2 in season 2 [Should be: WINTER SUN]
+  console.log(`The title of episode 2 in season 2 is ${res.title}`);
 
-  console.log(
-    `The title of episode 2 in season 2 is ${"TODO: fill in variable here"}`
-  );
-
+  req = { title: "BLACK RIVER" };
+  res = await bobRossCollection.findOne(req);
   // Find the season and episode number of the episode called "BLACK RIVER" [Should be: S02E06]
-
   console.log(
-    `The season and episode number of the "BLACK RIVER" episode is ${"TODO: fill in variable here"}`
+    `The season and episode number of the "BLACK RIVER" episode is ${res.episode}`
   );
 
+  // console.log(JSON.stringify(res, null, 2));
+
+  req = { elements: "CLIFF" };
+  res = await bobRossCollection.find(req).toArray();
   // Find all of the episode titles where Bob Ross painted a CLIFF [Should be: NIGHT LIGHT, EVENING SEASCAPE, SURF'S UP, CLIFFSIDE, BY THE SEA, DEEP WILDERNESS HOME, CRIMSON TIDE, GRACEFUL WATERFALL]
 
   console.log(
-    `The episodes that Bob Ross painted a CLIFF are ${"TODO: fill in variable here"}`
+    `The episodes that Bob Ross painted a CLIFF are ${res
+      .map((item) => item.title)
+      .join(", ")}`
   );
 
   // Find all of the episode titles where Bob Ross painted a CLIFF and a LIGHTHOUSE [Should be: NIGHT LIGHT]
