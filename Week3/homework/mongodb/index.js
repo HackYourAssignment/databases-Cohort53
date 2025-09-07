@@ -108,13 +108,14 @@ async function updateEpisodeExercises(client) {
 }
 
 async function deleteEpisodeExercise(client) {
-  /**
-   * It seems an errand episode has gotten into our data.
-   * This is episode 14 in season 31. Please remove it and verify that it has been removed!
-   */
-
+  const bobRossCollection = await client
+    .db("databaseWeek3")
+    .collection("bob_ross_episodes");
+  req = { episode: "S31E14" };
+  res = await bobRossCollection.deleteMany(req);
+  //  This is episode 14 in season 31. Please remove it and verify that it has been removed!
   console.log(
-    `Ran a command to delete episode and it deleted ${"TODO: fill in variable here"} episodes`
+    `Ran a command to delete episode and it deleted ${res.deletedCount} episodes`
   );
 }
 
