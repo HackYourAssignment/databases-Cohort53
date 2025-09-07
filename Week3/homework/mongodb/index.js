@@ -51,22 +51,22 @@ async function findEpisodesExercises(client) {
     `The season and episode number of the "BLACK RIVER" episode is ${res.episode}`
   );
 
-  // console.log(JSON.stringify(res, null, 2));
-
   req = { elements: "CLIFF" };
   res = await bobRossCollection.find(req).toArray();
   // Find all of the episode titles where Bob Ross painted a CLIFF [Should be: NIGHT LIGHT, EVENING SEASCAPE, SURF'S UP, CLIFFSIDE, BY THE SEA, DEEP WILDERNESS HOME, CRIMSON TIDE, GRACEFUL WATERFALL]
-
   console.log(
     `The episodes that Bob Ross painted a CLIFF are ${res
       .map((item) => item.title)
       .join(", ")}`
   );
 
+  req = { elements: { $all: ["CLIFF", "LIGHTHOUSE"] } };
+  res = await bobRossCollection.find(req).toArray();
   // Find all of the episode titles where Bob Ross painted a CLIFF and a LIGHTHOUSE [Should be: NIGHT LIGHT]
-
   console.log(
-    `The episodes that Bob Ross painted a CLIFF and a LIGHTHOUSE are ${"TODO: fill in variable here"}`
+    `The episodes that Bob Ross painted a CLIFF and a LIGHTHOUSE are ${res
+      .map((item) => item.title)
+      .join(", ")}`
   );
 }
 
