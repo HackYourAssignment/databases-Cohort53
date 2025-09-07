@@ -25,7 +25,7 @@ async function createTables(client) {
     amount INTEGER,
     changed_date DATE,
     remark VARCHAR(100),
-    FOREIGN KEY (account_number) REFERENCES account(account_number) ON DELETE CASCADE
+    CONSTRAINT fk_account_number FOREIGN KEY (account_number) REFERENCES account(account_number) ON DELETE CASCADE
     )`;
   try {
     await client.connect();
