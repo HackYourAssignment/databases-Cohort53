@@ -75,15 +75,13 @@ async function updateEpisodeExercises(client) {
     .db("databaseWeek3")
     .collection("bob_ross_episodes");
 
-  bobRossCollection.updateOne(
+  res = await bobRossCollection.updateOne(
     { episode: "S30E13" },
     { $set: { title: "BLUE RIDGE FALLS" } }
   );
-  req = { episode: "S30E13" };
-  res = await bobRossCollection.findOne(req);
   // Episode 13 in season 30 should be called BLUE RIDGE FALLS.
   console.log(
-    `Ran a command to update episode 13 in season 30 and it updated ${res.title} episodes`
+    `Ran a command to update episode 13 in season 30 and it updated ${res.modifiedCount} episodes`
   );
 
   res = await bobRossCollection.updateMany({ elements: "BUSHES" }, [
@@ -169,5 +167,4 @@ The episodes that Bob Ross painted a CLIFF and a LIGHTHOUSE are NIGHT LIGHT
 Ran a command to update episode 13 in season 30 and it updated 1 episodes
 Ran a command to update all the BUSHES to BUSH and it updated 120 episodes
 Ran a command to delete episode and it deleted 1 episodes
- 
 */
