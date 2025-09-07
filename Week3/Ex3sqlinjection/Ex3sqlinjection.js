@@ -26,7 +26,22 @@ getPopulation("country", "Netherlands", "NLD", function (err, population) {
   if (err) {
     console.error("Error:", err);
   } else {
-    console.log("Population:", population);
+    console.log("Netherland's population (the regular query):", population);
   }
-  conn.end();
 });
+
+// The resulting query becomes: SELECT Population FROM country WHERE Name = = '' OR 1=1 --' and code = '' OR 1=1 --'
+// Since 1=1 is always true, this condition matches all rows in the country table. However, because the code only retrieves the first row from the result set, it returns only the population of the first country in the table.
+getPopulation(
+  "country",
+  "' OR 1=1 --",
+  "' OR 1=1 --",
+  function (err, population) {
+    if (err) {
+      console.error("Error:", err);
+    } else {
+      console.log("the hacker's query):", population);
+    }
+    conn.end();
+  }
+);
