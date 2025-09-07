@@ -86,12 +86,24 @@ async function updateEpisodeExercises(client) {
     `Ran a command to update episode 13 in season 30 and it updated ${res.title} episodes`
   );
 
-  // Unfortunately we made a mistake in the arrays and the element type called 'BUSHES' should actually be 'BUSH' as sometimes only one bush was painted.
-  // Update all of the documents in the collection that have `BUSHES` in the elements array to now have `BUSH`
+  res = await bobRossCollection.updateMany({ elements: "BUSHES" }, [
+    {
+      $set: {
+        elements: {
+          $map: {
+            input: "$elements",
+            as: "el",
+            in: {
+              $cond: [{ $eq: ["$$el", "BUSHES"] }, "BUSH", "$$el"],
+            },
+          },
+        },
+      },
+    },
+  ]);
   // It should update 120 episodes!
-
   console.log(
-    `Ran a command to update all the BUSHES to BUSH and it updated ${"TODO: fill in variable here"} episodes`
+    `Ran a command to update all the BUSHES to BUSH and it updated ${res.modifiedCount} episodes`
   );
 }
 
