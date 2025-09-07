@@ -71,17 +71,19 @@ async function findEpisodesExercises(client) {
 }
 
 async function updateEpisodeExercises(client) {
-  /**
-   * There are some problems in the initial data that was filled in.
-   * Let's use update functions to update this information.
-   *
-   * Note: do NOT change the data.json file
-   */
+  const bobRossCollection = await client
+    .db("databaseWeek3")
+    .collection("bob_ross_episodes");
 
-  // Episode 13 in season 30 should be called BLUE RIDGE FALLS, yet it is called BLUE RIDGE FALLERS now. Fix that
-
+  bobRossCollection.updateOne(
+    { episode: "S30E13" },
+    { $set: { title: "BLUE RIDGE FALLS" } }
+  );
+  req = { episode: "S30E13" };
+  res = await bobRossCollection.findOne(req);
+  // Episode 13 in season 30 should be called BLUE RIDGE FALLS.
   console.log(
-    `Ran a command to update episode 13 in season 30 and it updated ${"TODO: fill in variable here"} episodes`
+    `Ran a command to update episode 13 in season 30 and it updated ${res.title} episodes`
   );
 
   // Unfortunately we made a mistake in the arrays and the element type called 'BUSHES' should actually be 'BUSH' as sometimes only one bush was painted.
