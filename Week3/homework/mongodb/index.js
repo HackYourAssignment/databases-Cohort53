@@ -1,5 +1,6 @@
 const { MongoClient, ServerApiVersion } = require("mongodb");
-
+const { config: configDotenv } = require("dotenv");
+configDotenv({ silent: true });
 const { seedDatabase } = require("./seedDatabase.js");
 
 async function createEpisodeExercise(client) {
