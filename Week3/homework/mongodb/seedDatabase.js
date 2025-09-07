@@ -1,6 +1,4 @@
 const data = require("./data.json");
-const { config: configDotenv } = require("dotenv");
-configDotenv({ silent: true });
 
 /**
  * This function will drop and recreate the collection of sample data in our csv file.

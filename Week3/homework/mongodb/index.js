@@ -4,18 +4,32 @@ configDotenv({ silent: true });
 const { seedDatabase } = require("./seedDatabase.js");
 
 async function createEpisodeExercise(client) {
-  /**
-   * We forgot to add the last episode of season 9. It has this information:
-   *
-   * episode: S09E13
-   * title: MOUNTAIN HIDE-AWAY
-   * elements: ["CIRRUS", "CLOUDS", "CONIFER", "DECIDIOUS", "GRASS", "MOUNTAIN", "MOUNTAINS", "RIVER", "SNOWY_MOUNTAIN", "TREE", "TREES"]
-   */
+  const bobRossCollection = await client
+    .db("databaseWeek3")
+    .collection("bob_ross_episodes");
 
-  // Write code that will add this to the collection!
+  const documents = {
+    episode: "S09E13",
+    title: "MOUNTAIN HIDE-AWAY",
+    elements: [
+      "CIRRUS",
+      "CLOUDS",
+      "CONIFER",
+      "DECIDIOUS",
+      "GRASS",
+      "MOUNTAIN",
+      "MOUNTAINS",
+      "RIVER",
+      "SNOWY_MOUNTAIN",
+      "TREE",
+      "TREES",
+    ],
+  };
+
+  const id = await bobRossCollection.insertOne(documents);
 
   console.log(
-    `Created season 9 episode 13 and the document got the id ${"TODO: fill in variable here"}`
+    `Created season 9 episode 13 and the document got the id ${id.insertedId}`
   );
 }
 
