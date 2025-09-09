@@ -1,0 +1,17 @@
+{
+  "name": "mongodb-crud",
+  "version": "1.0.0",
+  "main": "connectDatabase.js",
+  "type": "module",
+  "scripts": {
+    "start": "node connectDatabase.js"
+  },
+  "author": "hshamsadd",
+  "license": "ISC",
+  "description": "Week 3 Assignment",
+  "dependencies": {
+    "dotenv": "^17.2.2",
+    "mongodb": "^6.19.0",
+    "pg": "^8.16.3"
+  }
+}
