@@ -1,0 +1,16 @@
+{
+  "name": "ex2-transactions",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "dotenv": "^17.2.2",
+    "mongodb": "^6.19.0"
+  }
+}
