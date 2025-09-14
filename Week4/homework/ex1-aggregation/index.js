@@ -51,13 +51,7 @@ async function getContinentsPopulation(collection, year, age) {
       },
       {
         $addFields: {
-          M: { $toInt: "$M" },
-          F: { $toInt: "$F" },
-        },
-      },
-      {
-        $addFields: {
-          TotalPopulation: { $add: ["$M", "$F"] },
+          TotalPopulation: { $add: [{ $toInt: "$M" }, { $toInt: "$F" }] },
         },
       },
       {
