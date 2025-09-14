@@ -3,6 +3,7 @@ import "dotenv/config";
 const clientMongo = new MongoClient(process.env.MONGODB_URL);
 import fs from "fs";
 import csv from "csv-parser";
+let data;
 
 async function processCSV(fileName) {
   return new Promise((resolve, reject) => {
@@ -15,15 +16,37 @@ async function processCSV(fileName) {
   });
 }
 
+async function getTotalPopulationByYear(collection, country) {
+  const result = await collection
+    .aggregate([
+      { $match: { Country: country } },
+      {
+        $group: {
+          _id: { $toInt: "$Year" },
+          countPopulation: {
+            $sum: {
+              $add: [{ $toInt: "$M" }, { $toInt: "$F" }],
+            },
+          },
+        },
+      },
+      { $sort: { _id: 1 } },
+    ])
+    .toArray();
+  return result;
+}
+
 async function main() {
   try {
     await clientMongo.connect();
     const db = clientMongo.db("databaseWeek4");
     const collection = db.collection("population_pyramid");
-    let data = await processCSV(
+    data = await processCSV(
       "./Week4/homework/ex1-aggregation/population_pyramid_1950-2022.csv"
     );
     await collection.insertMany(data);
+    data = await getTotalPopulationByYear(collection, "Netherlands");
+    console.log(JSON.stringify(data, null, 2));
   } catch (error) {
     console.error("Error connecting to MongoDB:", error);
   } finally {
