@@ -14,45 +14,26 @@ export async function transfer(clientMongo, account, transactionDetails) {
   };
   try {
     await session.withTransaction(async () => {
-      // Deduct from donator
       await account.updateOne(
         { account_number: donator_account_number },
-        { $inc: { balance: -amount } },
-        { session }
-      );
-
-      // Add to receiver
-      await account.updateOne(
-        { account_number: receiver_account_number },
-        { $inc: { balance: amount } },
-        { session }
-      );
-
-      // Log donator change
-      await clientMongo.db().collection("account_changes").insertOne(
         {
-          account_number: donator_account_number,
-          amount: -amount,
-          changed_date,
-          remark,
+          $inc: { balance: -amount },
+          $push: { account_changes: { amount: -amount, changed_date, remark } },
         },
         { session }
       );
-
-      // Log receiver change
-      await clientMongo.db().collection("account_changes").insertOne(
+      await account.updateOne(
+        { account_number: receiver_account_number },
+        { $inc: { balance: amount } },
         {
-          account_number: receiver_account_number,
-          amount,
-          changed_date,
-          remark,
+          $push: { account_changes: { amount: amount, changed_date, remark } },
         },
         { session }
       );
     }, transactionOptions);
     console.log("Transaction committed.");
-  } catch (e) {
-    console.log("Transaction aborted.", e);
+  } catch (error) {
+    console.log("Transaction aborted.", error);
   } finally {
     await session.endSession();
     console.log("Transaction completed!");
