@@ -1,0 +1,18 @@
+{
+  "name": "aggregation",
+  "version": "1.0.0",
+  "description": "",
+  "main": "ex1-aggregation.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ex1-aggregation.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^17.2.2",
+    "mongodb": "^6.19.0"
+  }
+}
