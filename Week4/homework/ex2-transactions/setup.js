@@ -11,9 +11,19 @@ export async function setup() {
   const db = clientMongo.db("databaseWeek4");
   const account = await db.createCollection("accounts");
   await account.deleteMany({});
-  await account.insertMany(accounts);
-  const accountChanges = await db.createCollection("account_changes");
-  await accountChanges.deleteMany({});
-  await accountChanges.insertMany(account_changes);
-  return { clientMongo, account, accountChanges };
+  // await account.insertMany(accounts);
+  for (const acc of accounts) {
+    acc.account_changes = account_changes
+      .filter((a) => a.account_number === acc.account_number)
+      .map((a) => {
+        delete a.account_number;
+        return a;
+      });
+    console.log(acc);
+    await account.insertOne(acc);
+  }
+  // const accountChanges = await db.createCollection("account_changes");
+  // await accountChanges.deleteMany({});
+  // await accountChanges.insertMany(account_changes);
+  return { clientMongo, account };
 }
