@@ -1,79 +1,61 @@
 const { MongoClient } = require("mongodb");
 const url = "mongodb://localhost:27017";
 const dbName = "financeDB";
-
-async function transferAmount(client, fromAccount, toAccount, amount, remark) {
-  const session = client.startSession();
-  const transactionOptions = {
-    readPreference: { mode: "primary" },
-    readConcern: { level: "local" },
-    writeConcern: { w: "majority" },
-  };
-
-  try {
-    await session.withTransaction(async () => {
-      const db = client.db(dbName);
-      const accounts = db.collection("accounts");
-
-      // Make sure both accounts exist
-      const fromAcc = await accounts.findOne(
-        { account_number: fromAccount },
-        { session }
-      );
-      const toAcc = await accounts.findOne(
-        { account_number: toAccount },
-        { session }
-      );
-
-      if (!fromAcc || !toAcc) {
-        throw new Error("Account not found");
-      }
-      if (fromAcc.balance < amount) {
-        throw new Error(`Insufficient funds in account ${fromAccount}`);
-      }
-
-      // Withdraw from sender
-      await accounts.updateOne(
-        { account_number: fromAccount },
-        {
-          $inc: { balance: -amount },
-          $push: {
-            account_changes: {
-              change_number: fromAcc.account_changes.length + 1,
-              change_amount: -amount,
-              change_date: new Date(),
-              remark,
-            },
+async function insertAccount(client) {
+  await client.db(dbName).collection("accounts").deleteMany({});
+  const res = await client
+    .db(dbName)
+    .collection("accounts")
+    .insertMany([
+      {
+        account_number: 1,
+        balance: 5000,
+        account_changes: [
+          {
+            change_number: 1,
+            change_amount: 500,
+            change_date: new Date("2025-09-17"),
+            remark: "gift",
           },
-        },
-        { session }
-      );
-
-      // Deposit to receiver
-      await accounts.updateOne(
-        { account_number: toAccount },
-        {
-          $inc: { balance: amount },
-          $push: {
-            account_changes: {
-              change_number: toAcc.account_changes.length + 1,
-              change_amount: amount,
-              change_date: new Date(),
-              remark,
-            },
+          {
+            change_number: 2,
+            change_amount: -200,
+            change_date: new Date("2025-09-18"),
+            remark: "withdrawal",
           },
-        },
-        { session }
-      );
-    }, transactionOptions);
-
-    console.log("Transaction committed ✅");
-  } catch (err) {
-    console.error("Transaction aborted ❌", err.message);
-    await session.abortTransaction();
-  } finally {
-    await session.endSession();
-  }
+          {
+            change_number: 3,
+            change_amount: 300,
+            change_date: new Date("2025-09-19"),
+            remark: "deposit",
+          },
+        ],
+      },
+      {
+        account_number: 2,
+        balance: 3000,
+        account_changes: [
+          {
+            change_number: 1,
+            change_amount: 1000,
+            change_date: new Date("2025-09-17"),
+            remark: "salary",
+          },
+          {
+            change_number: 2,
+            change_amount: -500,
+            change_date: new Date("2025-09-18"),
+            remark: "bills",
+          },
+          {
+            change_number: 3,
+            change_amount: 200,
+            change_date: new Date("2025-09-19"),
+            remark: "freelance",
+          },
+        ],
+      },
+    ]);
 }
 
 async function main() {

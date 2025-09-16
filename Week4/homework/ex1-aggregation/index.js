@@ -2,15 +2,6 @@ const { MongoClient } = require("mongodb");
 const url = "mongodb://localhost:27017";
 const dbName = "databaseweek4";
 
-async function getInformation(client, country, year) {
-  const res = await client
-    .db(dbName)
-    .collection("population")
-    .aggregate([{ $match: { Country: country, Year: year } }]);
-  return res.toArray();
-}
-
-///////////////////////////////////////////
 async function getTotalPopulation(client, country) {
   const res = await client
     .db(dbName)
@@ -61,14 +52,14 @@ async function main() {
     const information = await group(client, "Netherlands", 2020);
     console.log("Information:", information);
 
-    //const totalPopulation = await getTotalPopulation(client, "Netherlands");
-    //console.log("Total Population:", totalPopulation);
-    /*const informationOfPopulation = await getInformationOfPopulation(
+    const totalPopulation = await getTotalPopulation(client, "Netherlands");
+    console.log("Total Population:", totalPopulation);
+    const informationOfPopulation = await getInformationOfPopulation(
       client,
       2020,
       "100+"
     );
-    console.log("Information Of Population:", informationOfPopulation);*/
+    console.log("Information Of Population:", informationOfPopulation);
   } catch (err) {
     console.log(err.message);
   } finally {
