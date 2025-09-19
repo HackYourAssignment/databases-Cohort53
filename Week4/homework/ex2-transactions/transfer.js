@@ -24,8 +24,8 @@ export async function transfer(clientMongo, account, transactionDetails) {
       );
       await account.updateOne(
         { account_number: receiver_account_number },
-        { $inc: { balance: amount } },
         {
+          $inc: { balance: amount },
           $push: { account_changes: { amount: amount, changed_date, remark } },
         },
         { session }
