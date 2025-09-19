@@ -13,7 +13,7 @@ async function main() {
     };
     await transfer(clientMongo, account, transactionDetails);
   } catch (error) {
-    console.error("Error connecting to MongoDB:", error);
+    console.error("Error:", error);
   } finally {
     await clientMongo.close();
     console.log("Connection to MongoDB closed");

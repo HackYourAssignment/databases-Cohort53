@@ -34,6 +34,7 @@ export async function transfer(clientMongo, account, transactionDetails) {
     console.log("Transaction committed.");
   } catch (error) {
     console.log("Transaction aborted.", error);
+    throw new Error(error);
   } finally {
     await session.endSession();
     console.log("Transaction completed!");
